@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌 나랑 데이트할래?</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Single+Day&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: #fff0f3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Gaegu', cursive;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* 배경 하트들 */
+  .bg-hearts {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-heart {
+    position: absolute;
+    font-size: 1.5rem;
+    opacity: 0.15;
+    animation: floatUp linear infinite;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0.15; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  .card {
+    background: white;
+    border-radius: 32px;
+    padding: 60px 50px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(255, 100, 130, 0.2), 0 0 0 3px #ffd6df;
+    max-width: 480px;
+    width: 90%;
+    position: relative;
+    z-index: 10;
+    animation: cardIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes cardIn {
+    from { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+    to { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .emoji-top {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 16px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  h1 {
+    font-size: 2.6rem;
+    color: #e8426a;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-size: 1.3rem;
+    color: #ffaabc;
+    margin-bottom: 40px;
+  }
+
+  .bear-img {
+    font-size: 6rem;
+    margin: 20px 0;
+    display: block;
+    animation: wiggle 3s ease-in-out infinite;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
+
+  .buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    min-height: 80px;
+  }
+
+  .btn-yes {
+    background: linear-gradient(135deg, #ff6b8a, #e8426a);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 18px 50px;
+    font-size: 1.8rem;
+    font-family: 'Gaegu', cursive;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(232, 66, 106, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s, padding 0.3s, font-size 0.3s;
+    font-weight: 700;
+  }
+
+  .btn-yes:hover {
+    transform: scale(1.08);
+    box-shadow: 0 10px 30px rgba(232, 66, 106, 0.5);
+  }
+
+  .btn-no {
+    background: white;
+    color: #ccc;
+    border: 2px solid #eee;
+    border-radius: 50px;
+    padding: 14px 36px;
+    font-size: 1.4rem;
+    font-family: 'Gaegu', cursive;
+    cursor: pointer;
+    transition: transform 0.1s;
+    position: relative;
+  }
+
+  /* 성공 화면 */
+  .success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .success-emoji {
+    font-size: 6rem;
+    animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .success h2 {
+    font-size: 2.8rem;
+    color: #e8426a;
+    margin: 16px 0 8px;
+    animation: popIn 0.6s 0.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  .success p {
+    font-size: 1.4rem;
+    color: #ffaabc;
+    animation: popIn 0.6s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  /* 하트 폭죽 */
+  .confetti-heart {
+    position: fixed;
+    pointer-events: none;
+    font-size: 1.5rem;
+    animation: confettiFall 2s ease-in forwards;
+    z-index: 999;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg) scale(1); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
+  }
+
+  .no-count-msg {
+    font-size: 1rem;
+    color: #ffb3c1;
+    margin-top: 12px;
+    height: 24px;
+    transition: opacity 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-hearts" id="bgHearts"></div>
+
+<div class="card" id="mainCard">
+  <div id="question-view">
+    <span class="emoji-top">💌</span>
+    <h1>나랑 데이트 할래?</h1>
+    <p class="subtitle">한번만 생각해봐... 🥺</p>
+    <span class="bear-img">🐻</span>
+    <div class="buttons" id="buttons">
+      <button class="btn-yes" id="yesBtn" onclick="onYes()">Yes! 💕</button>
+      <button class="btn-no" id="noBtn" onmouseover="runAway()" ontouchstart="runAway()">No</button>
+    </div>
+    <div class="no-count-msg" id="noMsg"></div>
+  </div>
+
+  <div class="success" id="success-view">
+    <span class="success-emoji">🎉</span>
+    <h2>야호!!! 💖</h2>
+    <p>나 너무 행복해...<br>꼭 멋진 데이트 하자! 🥰</p>
+    <span style="font-size:4rem; margin-top:20px; display:block;">🐻❤️🐶</span>
+
+    <div style="
+      margin-top: 32px;
+      background: linear-gradient(135deg, #fff0f3, #ffe4ec);
+      border-radius: 20px;
+      padding: 24px 28px;
+      border: 2px dashed #ffb3c6;
+      animation: popIn 0.6s 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      width: 100%;
+    ">
+      <p style="font-size:1.3rem; color:#e8426a; margin-bottom:14px; font-weight:700;">🎵 너랑 함께 듣고 싶은 노래야</p>
+      <a href="https://www.youtube.com/watch?v=uPF_wjWSf78&list=RDuPF_wjWSf78&start_radio=1"
+         target="_blank"
+         style="
+           display: flex;
+           align-items: center;
+           gap: 14px;
+           background: white;
+           border-radius: 14px;
+           padding: 16px 20px;
+           text-decoration: none;
+           box-shadow: 0 4px 16px rgba(255,100,130,0.15);
+           transition: transform 0.2s, box-shadow 0.2s;
+         "
+         onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 8px 24px rgba(255,100,130,0.25)'"
+         onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(255,100,130,0.15)'"
+      >
+        <span style="
+          background: linear-gradient(135deg, #ff6b8a, #e8426a);
+          border-radius: 50%;
+          width: 52px; height: 52px;
+          display: flex; align-items: center; justify-content: center;
+          font-size: 1.6rem;
+          flex-shrink: 0;
+          box-shadow: 0 4px 12px rgba(232,66,106,0.35);
+          animation: heartbeat 1.5s ease-in-out infinite;
+        ">💕</span>
+        <div style="text-align:left;">
+          <div style="font-size:1.1rem; color:#333; font-weight:700; font-family:'Gaegu',cursive;">You Got Me Like (Acoustic)</div>
+          <div style="font-size:0.95rem; color:#aaa; margin-top:2px;">SHAED · YouTube</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 배경 하트 생성
+  const bgHearts = document.getElementById('bgHearts');
+  const heartEmojis = ['❤️','💕','💗','💓','💖','💝','🌹'];
+  for (let i = 0; i < 18; i++) {
+    const h = document.createElement('div');
+    h.className = 'bg-heart';
+    h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+    h.style.left = Math.random() * 100 + '%';
+    h.style.animationDuration = (8 + Math.random() * 12) + 's';
+    h.style.animationDelay = (Math.random() * 10) + 's';
+    h.style.fontSize = (1 + Math.random() * 2) + 'rem';
+    bgHearts.appendChild(h);
+  }
+
+  let noCount = 0;
+  let yesSize = 1;
+  const noMessages = [
+    "앗! 도망갔다! 🏃",
+    "잡을 수 없어~ 🤭",
+    "No 버튼이 부끄럽대... 😳",
+    "그냥 Yes 누르면 안돼? 🥺",
+    "No가 숨어버렸어! 👀",
+    "No 버튼은 없는 거야~ 💕",
+    "포기해! Yes 눌러! 😆",
+  ];
+
+  function runAway() {
+    noCount++;
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const msg = document.getElementById('noMsg');
+
+    // No 버튼 랜덤 이동
+    const card = document.getElementById('mainCard');
+    const cardRect = card.getBoundingClientRect();
+    const maxX = window.innerWidth - 80;
+    const maxY = window.innerHeight - 80;
+
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+    noBtn.style.zIndex = '999';
+    noBtn.style.transition = 'left 0.2s, top 0.2s';
+
+    // Yes 버튼 커지기
+    yesSize = Math.min(yesSize + 0.15, 2.2);
+    yesBtn.style.transform = `scale(${yesSize})`;
+    yesBtn.style.fontSize = (1.8 * Math.min(yesSize, 1.6)) + 'rem';
+
+    // 메시지
+    msg.textContent = noMessages[Math.min(noCount - 1, noMessages.length - 1)];
+  }
+
+  function onYes() {
+    document.getElementById('question-view').style.display = 'none';
+    const sv = document.getElementById('success-view');
+    sv.style.display = 'flex';
+
+    // 하트 폭죽
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        const h = document.createElement('div');
+        h.className = 'confetti-heart';
+        h.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+        h.style.left = Math.random() * 100 + 'vw';
+        h.style.top = '-20px';
+        h.style.animationDuration = (1.5 + Math.random()) + 's';
+        h.style.fontSize = (1 + Math.random() * 2) + 'rem';
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 3000);
+      }, i * 80);
+    }
+
+    // No 버튼 숨기기
+    const noBtn = document.getElementById('noBtn');
+    if (noBtn) noBtn.style.display = 'none';
+  }
+</script>
+</body>
+</html>
